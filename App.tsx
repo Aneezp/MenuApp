@@ -1,45 +1,26 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import * as React from 'react';
+import { Stack } from './src/stack/Stack';
+import { LoggedContext } from './src/common/Context';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import * as Common from './src/common/CommonFunctions';
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+export default function App() {
+  const [isLoged, setIsLoged] = React.useState(false);
+  const [role, setRole] = React.useState(false);
 
+  const HandleLogin = (prop: boolean) => {
+    setIsLoged(prop)
+  }
+  const resetContext = () => {
+    setIsLoged(false);
+    setRole(false);
+  }
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
+    <LoggedContext.Provider value={{ logged: isLoged, setLogged: HandleLogin, userRole: role, setUserRole: setRole, resetContext: resetContext }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} >
+        <Stack />
+      </SafeAreaView>
+    </LoggedContext.Provider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
-
-export default App;
