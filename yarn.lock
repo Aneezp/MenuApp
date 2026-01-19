@@ -2007,11 +2007,6 @@
   dependencies:
     react-native-url-polyfill "3.0.0"
 
-"@react-native-firebase/storage@^23.8.0":
-  version "23.8.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/storage/-/storage-23.8.0.tgz#11727a7f46b73cd110c6ede73a72a36dc0702349"
-  integrity sha512-fZ5TD9e/mRA0ggc3fhdf/Hc4UGblcKUH/l946//eP3liaKKnuaa4xV2zalVaWiX2GXG3qjUZ+nP9+M82IP99CA==
-
 "@react-native/assets-registry@0.81.5":
   version "0.81.5"
   resolved "https://registry.yarnpkg.com/@react-native/assets-registry/-/assets-registry-0.81.5.tgz#d22c924fa6f6d4a463c5af34ce91f38756c0fa7d"
