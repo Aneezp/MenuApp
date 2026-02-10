@@ -1,8 +1,8 @@
 import React, { use, useContext, useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { LoggedContext } from '../../../common/Context';
-import { getFirestore, collection, getDocs, getDoc, doc } from '@react-native-firebase/firestore';
-import { decryptData, encryptData, generateKey } from '../../../common/encryption';
+import { getDoc, doc } from '@react-native-firebase/firestore';
+import { decryptData } from '../../../common/encryption';
 import { saveToLocalStore } from '../../../common/localStore';
 
 import Config from "react-native-config";

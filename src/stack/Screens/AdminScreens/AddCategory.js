@@ -1,43 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
-import { db_Firebase } from '../../../common/CommonFunctions';
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from '@react-native-firebase/firestore';
+import { db_Firebase, getID } from '../../../common/CommonFunctions';
+import { collection, doc, getDocs, setDoc } from '@react-native-firebase/firestore';
+import { TextInputComponet } from '../CommonComponents';
 
 export const AddCategory = () => {
     const [categoryName, setCategoryName] = useState('');
-    const [categoryId, setCategoryId] = useState('');
+    const [categoryDesc, setCategoryDesc] = useState('');
+    const [nextId, setNextID] = useState(100)
+
+    useEffect(() => {
+        getId()
+    }, []);
+
+    const getId = async () => {
+        const ids = await getID(nextId, 'categories')
+        setNextID(ids)
+    }
 
     const handleAddCategory = async () => {
-        if (!categoryName || !categoryId) return Alert.alert('Error', 'Please fill all fields');
+        if (!categoryName || !nextId) return Alert.alert('Error', 'Please fill all fields');
         try {
-            await addDoc(collection(db_Firebase, 'categories'), {
-                categoryId,
-                categoryName,
-                foodCount: 0,
+            const res = await setDoc(doc(db_Firebase, 'categories', String(nextId)), {
+                categoryName: categoryName,
+                description: categoryDesc,
+                foodCount: 0
+            }).then((res) => {
+                console.log(res, '-success');
+                setCategoryName('');
+                setNextID('')
+                getID()
+            }).catch((e) => {
+                console.log(e, '-error');
             });
-            setCategoryName('');
-            setCategoryId('');
+
             Alert.alert('Success', 'Category added successfully');
         } catch (e) {
-            Alert.alert('Error', e.message);
+            Alert.alert('Error', e.message)
         }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Add New Category</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Category ID"
-                value={categoryId}
-                onChangeText={setCategoryId}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Category Name"
-                value={categoryName}
-                onChangeText={setCategoryName}
-            />
+            <TextInputComponet onChange={(text) => { setCategoryName(text) }} value={categoryName} mariginTop title={'Category'} placeHolder={"Category Name"} style={{ marginBottom: 10, width: '100%' }} />
+            <TextInputComponet height={'auto'} multiline onChange={(text) => { setCategoryDesc(text) }} value={categoryDesc} mariginTop title={'Description'} placeHolder={"Enter Description"} style={{ marginBottom: 10, width: '100%' }} />
             <TouchableOpacity style={styles.addButton} onPress={handleAddCategory}>
                 <Text style={styles.buttonText}>Save Category</Text>
             </TouchableOpacity>

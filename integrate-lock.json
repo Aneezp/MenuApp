@@ -37,10 +37,6 @@
       "version": "^23.7.0",
       "integrated": false
     },
-    "@react-native-firebase/storage": {
-      "version": "^23.7.0",
-      "integrated": false
-    },
     "@react-native/babel-preset": {
       "version": "0.81.5",
       "integrated": false

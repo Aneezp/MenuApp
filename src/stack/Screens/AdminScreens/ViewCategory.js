@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Alert, Modal } from 'react-native';
 import { db_Firebase } from '../../../common/CommonFunctions';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from '@react-native-firebase/firestore';
+import { PlusIcon } from '../../../Components/Svg';
+import { TextInputComponet } from '../CommonComponents';
 
 
 export const ViewCategory = () => {
     const [categories, setCategories] = useState([]);
+    const [editModal, setEditModal] = useState(false)
+    const [editItem, setEditItem] = useState(false)
+
+    const [categoryName, setCategoryName] = useState('');
+    const [viewMore, setViewMore] = useState(false);
+    const [categoryDesc, setCategoryDesc] = useState('');
 
     const fetchCategories = async () => {
         try {
@@ -34,8 +42,32 @@ export const ViewCategory = () => {
     };
 
     const handleEdit = (item) => {
-        // Navigation logic to an edit screen or modal would go here
-        Alert.alert('Edit', `Edit functionality for ${item.categoryName}`);
+        setEditModal(true)
+        setEditItem(item)
+        setCategoryName(item?.categoryName)
+        setCategoryDesc(item?.description ?? '')
+    };
+
+    const handleAddCategory = async () => {
+        if (!categoryName) return Alert.alert('Error', 'Please fill all fields');
+        try {
+            const res = await updateDoc(doc(db_Firebase, 'categories', editItem?.id), {
+                categoryName: categoryName,
+                description: categoryDesc
+            }).then((res) => {
+                console.log(res, '-success');
+                setCategoryName('');
+                setEditModal(false)
+                setEditItem({})
+                fetchCategories()
+                Alert.alert('Success', 'Category added successfully');
+            }).catch((e) => {
+                console.log(e, '-error');
+            });
+
+        } catch (e) {
+            Alert.alert('Error', e.message)
+        }
     };
 
     return (
@@ -46,10 +78,11 @@ export const ViewCategory = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <View style={styles.itemCard}>
-                        <View>
+                        <TouchableOpacity disabled={!item.description} onPress={() => { setViewMore(true); setEditItem(item) }} style={{ width: '70%' }}>
                             <Text style={styles.itemTitle}>{item.categoryName}</Text>
-                            <Text style={styles.itemSub}>ID: {item.categoryId} | Foods: {item.foodCount}</Text>
-                        </View>
+                            <Text style={styles.itemSub}>Foods: {item.foodCount}</Text>
+                            {item.description && <Text numberOfLines={1} style={styles.itemSub}>{item.description}</Text>}
+                        </TouchableOpacity>
                         <View style={styles.actionRow}>
                             <TouchableOpacity onPress={() => handleEdit(item)}>
                                 <Text style={styles.editText}>Edit</Text>
@@ -61,6 +94,41 @@ export const ViewCategory = () => {
                     </View>
                 )}
             />
+            <Modal visible={viewMore} onRequestClose={() => { setViewMore(false); setEditItem('') }} >
+                <View style={{ backgroundColor: '#2423232a', flex: 1, alignItems: "center", justifyContent: "center" }}>
+                    <View style={{ backgroundColor: 'white', width: "90%", borderRadius: 10, padding: 30 }}>
+                        <TouchableOpacity onPress={() => { setViewMore(false); setEditItem('') }} style={{ alignSelf: "flex-end", transform: [{ rotate: '45deg' }], marginRight: -10, marginTop: -20 }}>
+                            <PlusIcon />
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', alignItems: "center", gap: 10 }} >
+                            <Text style={styles.itemTitle}>{editItem.categoryName}</Text>
+                            <Text style={styles.itemSub}>Foods: {editItem.foodCount}</Text>
+                        </View>
+                        {editItem.description && <Text style={styles.itemSub}>{editItem.description}</Text>}
+                    </View>
+                </View>
+            </Modal>
+            <Modal visible={editModal} onRequestClose={() => { setEditModal(false); setEditItem('') }} >
+                <View style={{ backgroundColor: '#2423232a', flex: 1, alignItems: "center", justifyContent: "center" }}>
+                    <View style={{ backgroundColor: 'white', width: "90%", borderRadius: 10, padding: 30 }}>
+                        <TouchableOpacity onPress={() => { setEditModal(false); setEditItem('') }} style={{ alignSelf: "flex-end", transform: [{ rotate: '45deg' }], marginRight: -10, marginTop: -20 }}>
+                            <PlusIcon />
+                        </TouchableOpacity>
+                        <Text style={styles.header}>Edit category {editItem?.categoryName}</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Category Name"
+                            value={categoryName}
+                            onChangeText={setCategoryName}
+                        />
+                        <TextInputComponet height={'auto'} multiline onChange={(text) => { setCategoryDesc(text) }} value={categoryDesc} mariginTop title={'Description'} placeHolder={"Enter Description"} style={{ marginBottom: 10, width: '100%' }} />
+
+                        <TouchableOpacity style={styles.addButton} onPress={handleAddCategory}>
+                            <Text style={styles.buttonText}>Save Category</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };

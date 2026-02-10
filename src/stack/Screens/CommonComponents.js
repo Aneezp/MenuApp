@@ -17,15 +17,15 @@ export const HeaderComponent = ({ ...props }) => {
     )
 }
 
-export const TextInputComponet = ({ title, mariginTop = false, Icon = null, onChange, value, placeHolder, type = 'default' }) => {
+export const TextInputComponet = ({ title, mariginTop = false, Icon = null, onChange, value, placeHolder, type = 'default', style, multiline = false, height = 75 }) => {
     return (
-        <View style={{
-            width: '95%', height: 75, borderRadius: 10, marginTop: mariginTop ? 10 : 0, shadowColor: '#f50c0cff', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.3, shadowRadius: 3
-        }}>
+        <View style={[{
+            width: '95%', height: height, borderRadius: 10, marginTop: mariginTop ? 10 : 0, shadowColor: '#f50c0cff', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.3, shadowRadius: 3
+        }, style]}>
             <Text style={{ color: 'black', marginTop: 5, marginLeft: 5, marginBottom: 4 }}>{title}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%', borderRadius: 10, borderWidth: 0.5, paddingHorizontal: Icon ? 10 : 0, }}>
                 {Icon && Icon}
-                <TextInput keyboardType={type} autoCorrect={false} style={{ height: 47, textAlign: 'left', paddingHorizontal: 10, width: Icon ? '80%' : '100%' }}
+                <TextInput multiline keyboardType={type} autoCorrect={false} style={{ height: 47, textAlign: 'left', paddingHorizontal: 10, width: Icon ? '80%' : '100%' }}
                     onChangeText={onChange} value={value} placeholder={placeHolder} placeholderTextColor={'#6f6a6dff'}
                 />
             </View>

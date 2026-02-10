@@ -18,7 +18,7 @@ const AdminHome = ({ ...props }) => {
     const menuItems = [
         { id: 1, title: 'Add Menu', onPress: () => props?.navigation.navigate("AddMenu") },
         { id: 6, title: 'View Menu', onPress: () => props?.navigation.navigate("ViewMenu") },
-        { id: 2, title: 'Update Menu', onPress: () => console.log('Update Menu') },
+        // { id: 2, title: 'Update Menu', onPress: () => console.log('Update Menu') },
         { id: 1, title: 'Add Category', onPress: () => props?.navigation.navigate("AddCategory") },
         { id: 1, title: 'View Category', onPress: () => props?.navigation.navigate("ViewCategory") },
         { id: 3, title: 'Add Waiter', onPress: () => console.log('Add Waiter') },
@@ -32,7 +32,7 @@ const AdminHome = ({ ...props }) => {
     }
 
     return (
-        <ScrollView scrollEnabled={false} contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.profileContainer}>
                 <Image source={{ uri: profile.image }} style={styles.profileImage} />
                 <Text style={styles.profileName}>{profile.name}</Text>
